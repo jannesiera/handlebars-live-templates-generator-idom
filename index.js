@@ -21,7 +21,7 @@ const generateElementAttributes = (attributes) => {
         if(attribute.isHandlebars === true) {
             var context = generateContext(attribute.name);
             attrs +=
-                generateOpenIf(context) +
+                generateOpenIf(context + '!== undefined') +
                     generateAttribute(context, generateAttributeValueFunc(attribute.value)) +
                 generateCloseIf();
         } else {
@@ -81,7 +81,8 @@ const generateContext = (value) => {
 
 const generateText = (node) => {
     // Escapce newline characters
-    return "text('" + node.value.replace(/\r|\n/g, "\\n") + "');";
+    return "text(String(" + node.value.replace(/\r|\n/g, "\\n") + "));";
+    //return "text('" + node.value.replace(/\r|\n/g, "\\n") + "');";
 }
 
 const generateHandlebarsText = (node) => {
@@ -138,8 +139,40 @@ const generateChildNodes = (node) => {
 
 
 exports.GenerateRenderFunction = (tree) => {
-    return "import * as idom from 'incremental-dom';var elementOpen = idom.elementOpen;var elementClose = idom.elementClose;var text = idom.text;var attr = idom.attr;var elementOpenStart = idom.elementOpenStart;var elementOpenEnd = idom.elementOpenEnd;" +
-    `var deepCopy = function(source) {
+    return `
+    import * as idom from 'incremental-dom';
+    var elementOpen = idom.elementOpen;
+    var elementClose = idom.elementClose;
+    var text = idom.text;
+    var attr = idom.attr;
+    var elementOpenStart = idom.elementOpenStart;
+    var elementOpenEnd = idom.elementOpenEnd;
+    var attributes = idom.attributes;
+    var applyProp = idom.applyProp;
+    var symbols = idom.symbols;
+    attributes.checked = attributes.className = attributes.disabled = attributes.value = applyProp;
+    const applyDefault = attributes[symbols.default];
+    attributes[symbols.default] = function (elem, name, value) {
+    // Boolean false values should not set attributes at all.
+    if (value === false) {
+        return applyProp(elem, name, value);
+    }
+
+    // Work with properties defined on the prototype chain. This includes event
+    // handlers that can be bound via properties.
+    if (name in elem) {
+        return applyProp(elem, name, value);
+    }
+
+    // Handle custom events.
+    if (name.indexOf('on') === 0) {
+        return applyEvent(elem, name.substring(2), name, value);
+    }
+
+    // Fallback to default IncrementalDOM behaviour.
+    applyDefault(elem, name, value);
+    };
+    var deepCopy = function(source) {
     var copy = {};
     Object.getOwnPropertyNames(source).forEach(function(propKey) {  
         var desc = Object.getOwnPropertyDescriptor(source, propKey);
