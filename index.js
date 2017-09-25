@@ -80,10 +80,8 @@ const generateContext = (value) => {
 }
 
 const generateText = (node) => {
-    // Escapce newline characters
-    return "text(`" + node.value.replace(/\r|\n/g, "\\n").replace('`', '\\`') + "`);";
-    //return "text(`" + node.value.replace(/\r|\n/g, "\\n").replace('`', '` + "`" + `') + "`);";
-    //return "text('" + node.value.replace(/\r|\n/g, "\\n") + "');";
+    // Escapce newline characters and backticks
+    return "text(`" + node.value.replace(/\r|\n/g, "\\n").replace(/\u0060/g, '\\`') + "`);";
 }
 
 const generateHandlebarsText = (node) => {
