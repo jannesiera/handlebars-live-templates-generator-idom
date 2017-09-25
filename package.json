@@ -1,6 +1,6 @@
 {
   "name": "handlebars-live-templates-generator-idom",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Takes a handlebars live templates AST and generates an Incremental DOM render function.",
   "main": "index.js",
   "scripts": {
