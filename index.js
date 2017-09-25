@@ -150,6 +150,9 @@ exports.GenerateRenderFunction = (tree) => {
     var applyProp = idom.applyProp;
     var symbols = idom.symbols;
     attributes.checked = attributes.className = attributes.disabled = attributes.value = applyProp;
+    attributes.focus = function (el, name, value) {
+        if(value) el.focus();
+    }
     const applyDefault = attributes[symbols.default];
     attributes[symbols.default] = function (elem, name, value) {
     // Boolean false values should not set attributes at all.
