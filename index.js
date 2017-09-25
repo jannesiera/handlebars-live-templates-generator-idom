@@ -4,17 +4,6 @@ const generateElementOpen = (node) => {
     return "elementOpenStart('" + node.tagName + "');" + generateElementAttributes(node.handlebarAttrs) + "elementOpenEnd(" + generateString(node.tagName) + ");";
 }
 
-/*
-
-attr('class', function() {
-    var values = [];
-    values.push("green");
-    if(context['allowInsults']) {
-        values.push(" red");
-    }
-    return values.length > 0 ? values.reduce(function(sum, val) { return sum + val; }) : '';
-}())
-*/
 const generateElementAttributes = (attributes) => {
     let attrs = "";
     attributes.forEach(attribute => {
