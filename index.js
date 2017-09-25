@@ -81,7 +81,8 @@ const generateContext = (value) => {
 
 const generateText = (node) => {
     // Escapce newline characters
-    return "text(`" + node.value.replace(/\r|\n/g, "\\n") + "`);";
+    return "text(`" + node.value.replace(/\r|\n/g, "\\n").replace('`', '\`') + "`);";
+    //return "text(`" + node.value.replace(/\r|\n/g, "\\n").replace('`', '` + "`" + `') + "`);";
     //return "text('" + node.value.replace(/\r|\n/g, "\\n") + "');";
 }
 
